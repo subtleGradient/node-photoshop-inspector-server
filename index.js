@@ -9,11 +9,19 @@ if (module.id == '.') (function(){
   var cursor = ANSi(process.stdout)
   console.log('Testing')
   
-  var api = require('./lib/api').apiFromDescriptor(require('./lib/Inspector'))
+  var api = require('./lib/api').apiFromSpec(require('./lib/Inspector'))
   
-  console.log(JSON.stringify(api, null, 2))
+  var agents = {
+    DOM: require('./lib/generated/dom')
+  }
+  
+  // Object.keys(api).forEach(function(name){
+  //   console.log('\n\n'+name, JSON.stringify(api[name]))
+  // })
+  // console.log('\n\n')
   
   var _requests = {}
+  var BLACKLIST = {'DOM.highlightNode':true, 'DOM.hideHighlight':true}
   
   var config = {
     
@@ -24,38 +32,41 @@ if (module.id == '.') (function(){
     onsend: function(message){
       var request = message.id ? _requests[message.id] : _requests
       
-      cursor
-        .write('[\t')
-        
-        .white()
-        .bg.blue()
-          .write(JSON.stringify(request))
-        .bg.reset()
-        .reset()
-        
-        .write(',\t')
-        
-        .blue()
-          .write(JSON.stringify(api[request.method].description || api[request.method]))
-        .reset()
-        
-        .write('\n,\t')
-        
-        [message.error ? 'red' : 'black']()
-          .write(JSON.stringify(message))
-        .reset()
-      
-      if (api[request.method].returns)
+      if (request) if (!BLACKLIST[request.method]){
         cursor
-          .write('\n,\t')
+          .write('[\t')
+        
+          .white()
+          .bg.blue()
+            .write(JSON.stringify(request))
+          .bg.reset()
+          .reset()
+        
+          .write(',\t')
+        
           .blue()
-            .write(JSON.stringify(api[request.method].returns))
+            .write(JSON.stringify(api[request.method].description || api[request.method]))
+          .reset()
+        
+          .write('\n,\t')
+        
+          [message.error ? 'red' : 'green']()
+            .write(JSON.stringify(message))
           .reset()
           .write('\n')
       
-      cursor
-        .write('\n]')
-        .write('\n')
+        if (api[request.method].returns)
+          cursor
+            .write(',\t')
+            .blue()
+              .write(JSON.stringify(api[request.method].returns))
+            .reset()
+            .write('\n')
+      
+        cursor
+          .write(']')
+          .write('\n')
+      }
       
       if (message.id) delete _requests[message.id]
       else for (var id in _requests) delete _requests[id]
@@ -65,9 +76,7 @@ if (module.id == '.') (function(){
       _requests[message.id] = message
     },
     
-    agents: {
-      
-    },
+    agents: agents,
   }
   
   var agent = exports.Agent.start(config)
