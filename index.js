@@ -11,9 +11,15 @@ if (module.id == '.') (function(){
   
   var api = require('./lib/api').apiFromSpec(require('./lib/Inspector'))
   
+  var agentCache = {}
   var agents = {
-    DOM: require('./lib/generated/dom')
+    DOM: require('./lib/dom'),
+    CSS: require('./lib/css'),
   }
+  Object.keys(agents).forEach(function(domain){
+    agents[domain]._setCacheObject && agents[domain]._setCacheObject(agentCache)
+  })
+  
   
   // Object.keys(api).forEach(function(name){
   //   console.log('\n\n'+name, JSON.stringify(api[name]))
