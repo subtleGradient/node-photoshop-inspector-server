@@ -2,25 +2,16 @@
 
 cd "$(dirname "$0")"
 
-URL="http://m.facebook.com/"
-DEVTOOLS_URL="http://localhost:9222/devtools/devtools.html?ws=127.0.0.1:9074"
-
-"/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary"\
-  --user-data-dir="$TMPDIR/.chrome-user-data-DEBUG"\
-  --remote-debugging-port="9222"\
-  "$URL" &
-DEBUG_PID="$!"
-
-sleep 0.2
+PSWIP_PORT=9074
+DEBUG_PORT=9222
+DEVTOOLS_URL="http://localhost:$DEBUG_PORT/devtools/devtools.html?ws=127.0.0.1:$PSWIP_PORT"
 
 "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary"\
   --user-data-dir="$TMPDIR/.chrome-user-data-UI"\
+  --remote-debugging-port="$DEBUG_PORT"\
   "$DEVTOOLS_URL" &
-UI_PID="$!"
 
-# sleep 1 && open -a Terminal &
+DEBUG_PID="$!"
+node index.js $PSWIP_PORT
 
-node index.js
-
-kill "$UI_PID"
 kill "$DEBUG_PID"

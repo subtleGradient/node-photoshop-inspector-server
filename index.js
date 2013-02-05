@@ -38,7 +38,10 @@ if (module.id == '.') (function(){
     onsend: function(message){
       var request = message.id ? _requests[message.id] : _requests
       
-      if (request) if (!BLACKLIST[request.method]){
+      if (!(request && request.method && api[request.method] && !BLACKLIST[request.method])){
+        console.warn(request)
+      }
+      else{
         cursor
           .write('[\t')
         
@@ -51,7 +54,7 @@ if (module.id == '.') (function(){
           .write(',\t')
         
           .blue()
-            .write(JSON.stringify(api[request.method].description || api[request.method]))
+            .write(JSON.stringify(api[request.method] && api[request.method].description || api[request.method] || request.method))
           .reset()
         
           .write('\n,\t')
