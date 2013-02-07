@@ -13,7 +13,7 @@ if (module.id == '.') (function(){
   
   var agentCache = {}
   var agents = {
-    DOM: new (require('./lib/dom').DOM)(),
+    DOM: new (require('./lib/wip-ps').DOM)(),
     // CSS: require('./lib/css'),
   }
   
