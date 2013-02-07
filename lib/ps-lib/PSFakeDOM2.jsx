@@ -1,17 +1,17 @@
 var PSFakeDOM = typeof exports == 'object' ? exports : {}
 
-PSFakeDOM.activeDocument_getLayerCount = function() {
+PSFakeDOM.getLayerCount = function() {
   var ref = new ActionReference
   ref.putProperty(app.charIDToTypeID("Prpr"), app.charIDToTypeID("NmbL"))
   ref.putEnumerated(app.charIDToTypeID("Dcmn"), app.charIDToTypeID("Ordn"), app.charIDToTypeID("Trgt"))
   return executeActionGet(ref).getInteger(app.charIDToTypeID("NmbL"))
 }
 
-PSFakeDOM.activeDocument_hasBackground = function(){try{activeDocument.backgroundLayer;return true}catch(e){return false}}
+PSFakeDOM.hasBackground = function(){try{activeDocument.backgroundLayer;return true}catch(e){return false}}
 
 PSFakeDOM.getLayerActionDescriptors = function(){
   var ref
-  var layerCount = PSFakeDOM.activeDocument_getLayerCount() + Number(!PSFakeDOM.activeDocument_hasBackground())
+  var layerCount = PSFakeDOM.getLayerCount() + Number(!PSFakeDOM.hasBackground())
   var index = layerCount
   var layers = []
   
@@ -23,6 +23,8 @@ PSFakeDOM.getLayerActionDescriptors = function(){
   }
   return layers
 }
+
+PSFakeDOM.layerRefToLayerDescriptor = app.executeActionGet
 
 PSFakeDOM.invokeToJSON = function(layer){ return layer.toJSON() }
 
@@ -65,12 +67,6 @@ PSFakeDOM.requestChildNodes = function(layerID, depth){
   return children
 }
 
-// "name": "requestChildNodes",
-// "parameters": [
-//     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get children for." },
-//     { "name": "depth", "type": "integer", "optional": true, "description": "The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0." }
-// ],
-
 PSFakeDOM.LayerKeyWhitelist = {
   _parentId:1,
   _childLayerIDs:1,
@@ -110,7 +106,6 @@ PSFakeDOM.LayerKeyWhitelist = {
   hasUserMask:1,
   hasVectorMask:1,
 }
-
 
 PSFakeDOM.LayerKeyBlacklist = {}
 
@@ -160,5 +155,19 @@ PSFakeDOM.openFileAtPath = function(path){
   var desc = new ActionDescriptor
   desc.putPath(charIDToTypeID("null"), path)
   return executeAction(charIDToTypeID("Opn "), desc, DialogModes.NO)
+}
+
+PSFakeDOM.getLayerRefById = function(layerID){ var ref = new ActionReference; ref.putIdentifier(app.charIDToTypeID("Lyr "), layerID); return ref }
+PSFakeDOM.getLayerRefByName = function(layerName){ var ref = new ActionReference; ref.putName(app.charIDToTypeID("Lyr "), layerName); return ref }
+PSFakeDOM.getLayerRefByIndex = function(layerIndex){ var ref = new ActionReference; ref.putIndex(app.charIDToTypeID("Lyr "), layerIndex); return ref }
+
+PSFakeDOM.selectLayerByRef = function(layerRef){
+  var idslct = charIDToTypeID( "slct" );
+      var desc104 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+      desc104.putReference( idnull, layerRef );
+      var idMkVs = charIDToTypeID( "MkVs" );
+      desc104.putBoolean( idMkVs, false );
+  executeAction( idslct, desc104, DialogModes.NO );
 }
 

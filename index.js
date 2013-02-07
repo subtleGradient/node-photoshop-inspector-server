@@ -11,11 +11,7 @@ if (module.id == '.') (function(){
   
   var api = require('./lib/api').apiFromSpec(require('./lib/Inspector'))
   
-  var agentCache = {}
-  var agents = {
-    DOM: new (require('./lib/wip-ps').DOM)(),
-    // CSS: require('./lib/css'),
-  }
+  var agents = new (require('./lib/wip-ps').Everything)()
   
   
   // Object.keys(api).forEach(function(name){
