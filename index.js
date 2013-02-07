@@ -13,12 +13,9 @@ if (module.id == '.') (function(){
   
   var agentCache = {}
   var agents = {
-    DOM: require('./lib/dom'),
-    CSS: require('./lib/css'),
+    DOM: new (require('./lib/dom').DOM)(),
+    // CSS: require('./lib/css'),
   }
-  Object.keys(agents).forEach(function(domain){
-    agents[domain]._setCacheObject && agents[domain]._setCacheObject(agentCache)
-  })
   
   
   // Object.keys(api).forEach(function(name){
@@ -48,6 +45,7 @@ if (module.id == '.') (function(){
     
     onsend: function(message){
       var request = message.id ? _requests[message.id] : _requests
+      message.request = request
       
       if (!(request && request.method && api[request.method])){
         console.warn(request)
@@ -56,14 +54,14 @@ if (module.id == '.') (function(){
         cursor
           .write('[\t')
         
-          .white()
-          .bg.blue()
-            .write(JSON.stringify(request))
-          .bg.reset()
-          .reset()
-        
-          .write(',\t')
-        
+          // .white()
+          // .bg.blue()
+          //   .write(JSON.stringify(request))
+          // .bg.reset()
+          // .reset()
+          //         
+          // .write(',\t')
+          //         
           .blue()
             .write(JSON.stringify(api[request.method] && api[request.method].description || api[request.method] || request.method))
           .reset()
