@@ -32,16 +32,27 @@ if (module.id == '.') (function(){
   var config = {
     
     debug: function(){
-      console.warn.apply(console, arguments)
+      // console.warn.apply(console, arguments)
+    },
+    
+    onfire: function(event){
+      cursor
+        .write('\t')
+        .yellow()
+        .bg.black()
+          .write(JSON.stringify(event))
+        .bg.reset()
+        .reset()
+        .write('\n')
     },
     
     onsend: function(message){
       var request = message.id ? _requests[message.id] : _requests
       
-      if (!(request && request.method && api[request.method] && !BLACKLIST[request.method])){
+      if (!(request && request.method && api[request.method])){
         console.warn(request)
       }
-      else{
+      else if (!BLACKLIST[request.method]){
         cursor
           .write('[\t')
         
@@ -81,8 +92,17 @@ if (module.id == '.') (function(){
       else for (var id in _requests) delete _requests[id]
     },
     
-    onmessage: function(message){
-      _requests[message.id] = message
+    onmessage: function(request){
+      _requests[request.id] = request
+      if (!BLACKLIST[request.method])
+        cursor
+          .write(',\t')
+          .white()
+          .bg.blue()
+            .write(JSON.stringify(request))
+          .bg.reset()
+          .reset()
+          .write(',\n')
     },
     
     agents: agents,

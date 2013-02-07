@@ -27,28 +27,28 @@ PSFakeDOM.getLayerActionDescriptors = function(){
 PSFakeDOM.invokeToJSON = function(layer){ return layer.toJSON() }
 
 PSFakeDOM.layers_populateChildLayerIDs = function(layers, root){
-  var layersByID = {}, parentID
+  var layersByID = {}, parentId
   if (root == null) root = {layerID:-1, _childLayerIDs:[]}
-  parentID = root.layerID
-  layersByID[parentID] = root
+  parentId = root.layerID
+  layersByID[parentId] = root
   
   layers.filter(Boolean).forEach(function(layer, index){
     // Close Layer Group
     // if (layer.name == '</Layer group>'){
     if (layer.layerSection == 'layerSectionEnd'){
       layer._groupEnd = true
-      parentID = layersByID[parentID]._parentID
+      parentId = layersByID[parentId]._parentId
       return
     }
     // Normal Layer
     layersByID[layer.layerID] = layer
-    layer._parentID = parentID
-    if (!layersByID[parentID]._childLayerIDs) layersByID[parentID]._childLayerIDs = []
-    layersByID[parentID]._childLayerIDs.push(layer.layerID)
+    layer._parentId = parentId
+    if (!layersByID[parentId]._childLayerIDs) layersByID[parentId]._childLayerIDs = []
+    layersByID[parentId]._childLayerIDs.push(layer.layerID)
     
     // Layer Group
     if (layer.layerSection == 'layerSectionStart'){
-      parentID = layer.layerID
+      parentId = layer.layerID
     }
   })
   return layersByID
@@ -72,53 +72,65 @@ PSFakeDOM.requestChildNodes = function(layerID, depth){
 // ],
 
 PSFakeDOM.LayerKeyWhitelist = {
-  _parentID:1,
+  _parentId:1,
   _childLayerIDs:1,
   
-  background:0,
-  bounds:1,
-  channelRestrictions:0,
-  color:0,
-  count:0,
-  fillOpacity:0,
-  globalAngle:0,
+  visibleChannels:0,
+  vectorMaskFeather:0,
+  vectorMaskDensity:0,
+  userMaskFeather:0,
+  userMaskDensity:0,
+  useAlignedRendering:0,
+  targetChannels:0,
+  preserveTransparency:0,
+  mode:0,
+  layerLocking:0,
+  layerEffects:0,
+  itemIndex:0,
   group:0,
+  globalAngle:0,
+  fillOpacity:0,
+  count:0,
+  color:0,
+  channelRestrictions:0,
+  background:0,
+  adjustment:0,
+  
+  layerID:1,
+  name:1,
+  
+  textKey:1,
+  smartObject:1,
+  bounds:1,
+  layerSection:1,
+  visible:1,
+  opacity:1,
+  layerFXVisible:1,
   hasFilterMask:1,
   hasUserMask:1,
   hasVectorMask:1,
-  itemIndex:0,
-  layerFXVisible:0,
-  layerID:1,
-  layerLocking:0,
-  layerSection:1,
-  mode:0,
-  name:1,
-  opacity:1,
-  preserveTransparency:0,
-  targetChannels:0,
-  useAlignedRendering:0,
-  userMaskDensity:0,
-  userMaskFeather:0,
-  vectorMaskDensity:0,
-  vectorMaskFeather:0,
-  visible:1,
-  visibleChannels:0,
 }
 
 
+PSFakeDOM.LayerKeyBlacklist = {}
+
 PSFakeDOM.getLayers = function(LayerKeyWhitelist){
   if (LayerKeyWhitelist == null) LayerKeyWhitelist = PSFakeDOM.LayerKeyWhitelist
-  return PSFakeDOM.layers_populateChildLayerIDs(
+  var layers = PSFakeDOM.layers_populateChildLayerIDs(
     PSFakeDOM.getLayerActionDescriptors().map(PSFakeDOM.invokeToJSON).map(function(layer){
       var flatLayer = {}
       for (var key in layer) {
-        if (!LayerKeyWhitelist[key]) continue;
+        if (!LayerKeyWhitelist[key]) {
+          if (PSFakeDOM.debug) PSFakeDOM.LayerKeyBlacklist[key] = layer[key]
+          continue;
+        }
         var value = layer[key]
         flatLayer[key] = value
       }
       return flatLayer
     })
   )
+  return layers
 }
 
 PSFakeDOM.getDocumentNode = function(){
