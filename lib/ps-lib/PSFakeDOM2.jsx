@@ -11,7 +11,7 @@ PSFakeDOM.hasBackground = function(){try{activeDocument.backgroundLayer;return t
 
 PSFakeDOM.getLayerActionDescriptors = function(){
   var ref
-  var layerCount = PSFakeDOM.getLayerCount() + Number(!PSFakeDOM.hasBackground())
+  var layerCount = PSFakeDOM.getLayerCount() + 1 // Number(PSFakeDOM.hasBackground())
   var index = layerCount
   var layers = []
   
