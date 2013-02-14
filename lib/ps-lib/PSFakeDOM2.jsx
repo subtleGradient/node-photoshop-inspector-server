@@ -4,14 +4,14 @@ PSFakeDOM.getLayerCount = function() {
   var ref = new ActionReference
   ref.putProperty(app.charIDToTypeID("Prpr"), app.charIDToTypeID("NmbL"))
   ref.putEnumerated(app.charIDToTypeID("Dcmn"), app.charIDToTypeID("Ordn"), app.charIDToTypeID("Trgt"))
-  return executeActionGet(ref).getInteger(app.charIDToTypeID("NmbL"))
+  return executeActionGet(ref).getInteger(app.charIDToTypeID("NmbL")) + 1
 }
 
 PSFakeDOM.hasBackground = function(){try{activeDocument.backgroundLayer;return true}catch(e){return false}}
 
 PSFakeDOM.getLayerActionDescriptors = function(){
   var ref
-  var layerCount = PSFakeDOM.getLayerCount() + 1 // Number(PSFakeDOM.hasBackground())
+  var layerCount = PSFakeDOM.getLayerCount()
   var index = layerCount
   var layers = []
   
