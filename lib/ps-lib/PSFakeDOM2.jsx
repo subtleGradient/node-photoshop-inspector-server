@@ -89,7 +89,6 @@ PSFakeDOM.LayerKeyWhitelist = {
   color:0,
   channelRestrictions:0,
   background:0,
-  adjustment:0,
   
   layerID:1,
   name:1,
@@ -105,6 +104,7 @@ PSFakeDOM.LayerKeyWhitelist = {
   hasFilterMask:1,
   hasUserMask:1,
   hasVectorMask:1,
+  adjustment:1,
 }
 
 PSFakeDOM.LayerKeyBlacklist = {}
