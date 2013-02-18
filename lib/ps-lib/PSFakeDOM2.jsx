@@ -133,8 +133,6 @@ PSFakeDOM.getDocumentNode = function(){
   var docObj = {
     layerId: -1,
     type: 'document',
-    name: doc.name,
-    path: decodeURIComponent(doc.fullName),
     bounds: {
       left: 0,
       top: 0,
@@ -143,6 +141,9 @@ PSFakeDOM.getDocumentNode = function(){
     },
     children: PSFakeDOM.requestChildNodes(-1, 1),
   }
+  try { docObj.name = doc.name } catch(e){ docObj.name = 'Untitled' }
+  try { docObj.path = decodeURIComponent(doc.fullName) } catch(e){ docObj.path = '/tmp/Untitled.psd' }
+  
   docObj.bounds.right = docObj.bounds.width
   docObj.bounds.bottom = docObj.bounds.height
   return docObj
