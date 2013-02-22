@@ -1,15 +1,15 @@
 var PSFakeDOM = typeof exports == 'object' ? exports : {}
 
-PSFakeDOM.getLayerCount = function() {
+PSFakeDOM.getLayerCount = function getLayerCount() {
   var ref = new ActionReference
   ref.putProperty(app.charIDToTypeID("Prpr"), app.charIDToTypeID("NmbL"))
   ref.putEnumerated(app.charIDToTypeID("Dcmn"), app.charIDToTypeID("Ordn"), app.charIDToTypeID("Trgt"))
   return executeActionGet(ref).getInteger(app.charIDToTypeID("NmbL")) + 1
 }
 
-PSFakeDOM.hasBackground = function(){try{activeDocument.backgroundLayer;return true}catch(e){return false}}
+PSFakeDOM.hasBackground = function hasBackground(){try{activeDocument.backgroundLayer;return true}catch(e){return false}}
 
-PSFakeDOM.getLayerActionDescriptors = function(){
+PSFakeDOM.getLayerActionDescriptors = function getLayerActionDescriptors(){
   var ref
   var layerCount = PSFakeDOM.getLayerCount()
   var index = layerCount
@@ -26,9 +26,9 @@ PSFakeDOM.getLayerActionDescriptors = function(){
 
 PSFakeDOM.layerRefToLayerDescriptor = app.executeActionGet
 
-PSFakeDOM.invokeToJSON = function(layer){ return layer.toJSON() }
+PSFakeDOM.invokeToJSON = function invokeToJSON(layer){ return layer.toJSON() }
 
-PSFakeDOM.layers_populateChildLayerIDs = function(layers, root){
+PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(layers, root){
   var layersByID = {}, parentId
   if (root == null) root = {layerID:-1, _childLayerIDs:[]}
   parentId = root.layerID
@@ -56,7 +56,7 @@ PSFakeDOM.layers_populateChildLayerIDs = function(layers, root){
   return layersByID
 }
 
-PSFakeDOM.requestChildNodes = function(layerID, depth){
+PSFakeDOM.requestChildNodes = function requestChildNodes(layerID, depth){
   if (depth == null) depth = 1
   var children
   // TODO: Add support for more depths
@@ -109,7 +109,7 @@ PSFakeDOM.LayerKeyWhitelist = {
 
 PSFakeDOM.LayerKeyBlacklist = {}
 
-PSFakeDOM.getLayers = function(LayerKeyWhitelist){
+PSFakeDOM.getLayers = function getLayers(LayerKeyWhitelist){
   if (LayerKeyWhitelist == null) LayerKeyWhitelist = PSFakeDOM.LayerKeyWhitelist
   var layers = PSFakeDOM.layers_populateChildLayerIDs(
     PSFakeDOM.getLayerActionDescriptors().map(PSFakeDOM.invokeToJSON).map(function(layer){
@@ -128,7 +128,7 @@ PSFakeDOM.getLayers = function(LayerKeyWhitelist){
   return layers
 }
 
-PSFakeDOM.getDocumentNode = function(){
+PSFakeDOM.getDocumentNode = function getDocumentNode(){
   var doc = app.activeDocument
   var docObj = {
     layerId: -1,
@@ -149,7 +149,7 @@ PSFakeDOM.getDocumentNode = function(){
   return docObj
 }
 
-PSFakeDOM.openFileAtPath = function(path){
+PSFakeDOM.openFileAtPath = function openFileAtPath(path){
   path = new File(path)
   if (!path.exists) throw Error("doesn't exist: '" + path + "'");
   
@@ -158,11 +158,11 @@ PSFakeDOM.openFileAtPath = function(path){
   return executeAction(charIDToTypeID("Opn "), desc, DialogModes.NO)
 }
 
-PSFakeDOM.getLayerRefById = function(layerID){ var ref = new ActionReference; ref.putIdentifier(app.charIDToTypeID("Lyr "), layerID); return ref }
-PSFakeDOM.getLayerRefByName = function(layerName){ var ref = new ActionReference; ref.putName(app.charIDToTypeID("Lyr "), layerName); return ref }
-PSFakeDOM.getLayerRefByIndex = function(layerIndex){ var ref = new ActionReference; ref.putIndex(app.charIDToTypeID("Lyr "), layerIndex); return ref }
+PSFakeDOM.getLayerRefById = function getLayerRefById(layerID){ var ref = new ActionReference; ref.putIdentifier(app.charIDToTypeID("Lyr "), layerID); return ref }
+PSFakeDOM.getLayerRefByName = function getLayerRefByName(layerName){ var ref = new ActionReference; ref.putName(app.charIDToTypeID("Lyr "), layerName); return ref }
+PSFakeDOM.getLayerRefByIndex = function getLayerRefByIndex(layerIndex){ var ref = new ActionReference; ref.putIndex(app.charIDToTypeID("Lyr "), layerIndex); return ref }
 
-PSFakeDOM.selectLayerByRef = function(layerRef){
+PSFakeDOM.selectLayerByRef = function selectLayerByRef(layerRef){
   var idslct = charIDToTypeID( "slct" );
       var desc104 = new ActionDescriptor();
       var idnull = charIDToTypeID( "null" );
