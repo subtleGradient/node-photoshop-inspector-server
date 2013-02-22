@@ -964,6 +964,40 @@ function selectWorkPath(){
   executeAction( idslct, desc185, DialogModes.NO );
 }
 
+function selectVectorMaskPath(){
+  var idslct = charIDToTypeID( "slct" );
+      var desc1129 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref918 = new ActionReference();
+          var idPath = charIDToTypeID( "Path" );
+          var idPath = charIDToTypeID( "Path" );
+          var idvectorMask = stringIDToTypeID( "vectorMask" );
+          ref918.putEnumerated( idPath, idPath, idvectorMask );
+          var idLyr = charIDToTypeID( "Lyr " );
+          var idOrdn = charIDToTypeID( "Ordn" );
+          var idTrgt = charIDToTypeID( "Trgt" );
+          ref918.putEnumerated( idLyr, idOrdn, idTrgt );
+      desc1129.putReference( idnull, ref918 );
+  executeAction( idslct, desc1129, DialogModes.NO );
+}
+
+function refToCurrentPath(){
+  var ref163 = new ActionReference();
+  var idPath = charIDToTypeID( "Path" );
+  var idOrdn = charIDToTypeID( "Ordn" );
+  var idTrgt = charIDToTypeID( "Trgt" );
+  ref163.putEnumerated( idPath, idOrdn, idTrgt );
+  return ref163
+}
+
+function fs_writeFileSync(path, data){
+  var file = new File(path);
+  file.open('w');
+  file.writeln(data);
+  file.close();
+  return file
+}
+
 function deleteSelectedChannelOrMask(){
   var idDlt = charIDToTypeID( "Dlt " );
       var desc186 = new ActionDescriptor();
