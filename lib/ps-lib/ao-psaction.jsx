@@ -441,9 +441,9 @@ function createShapeLayer(bounds){
               var desc73 = new ActionDescriptor();
               var idClr = charIDToTypeID( "Clr " );
                   var desc74 = new ActionDescriptor();
-                  var idRd = charIDToTypeID( "Rd " ); desc74.putDouble( idRd, 0.000000 );
+                  var idRd = charIDToTypeID( "Rd  " ); desc74.putDouble( idRd, 0.000000 );
                   var idGrn = charIDToTypeID( "Grn " ); desc74.putDouble( idGrn, 0.000000 );
-                  var idBl = charIDToTypeID( "Bl " ); desc74.putDouble( idBl, 0.000000 );
+                  var idBl = charIDToTypeID( "Bl  " ); desc74.putDouble( idBl, 0.000000 );
               var idRGBC = charIDToTypeID( "RGBC" );
               desc73.putObject( idClr, idRGBC, desc74 );
           var idsolidColorLayer = stringIDToTypeID( "solidColorLayer" );
@@ -479,9 +479,9 @@ function createShapeLayer(bounds){
                   var desc77 = new ActionDescriptor();
                   var idClr = charIDToTypeID( "Clr " );
                       var desc78 = new ActionDescriptor();
-                      var idRd = charIDToTypeID( "Rd " ); desc78.putDouble( idRd, 0 );
+                      var idRd = charIDToTypeID( "Rd  " ); desc78.putDouble( idRd, 0 );
                       var idGrn = charIDToTypeID( "Grn " ); desc78.putDouble( idGrn, 0 );
-                      var idBl = charIDToTypeID( "Bl " ); desc78.putDouble( idBl, 0 );
+                      var idBl = charIDToTypeID( "Bl  " ); desc78.putDouble( idBl, 0 );
                   var idRGBC = charIDToTypeID( "RGBC" );
                   desc77.putObject( idClr, idRGBC, desc78 );
               var idsolidColorLayer = stringIDToTypeID( "solidColorLayer" );
