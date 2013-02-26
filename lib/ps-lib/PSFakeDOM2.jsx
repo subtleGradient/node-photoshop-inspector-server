@@ -204,3 +204,20 @@ PSFakeDOM.findUniqueStyles = function findUniqueStyles(){
   return styles
 }
 
+PSFakeDOM.populateValues = function(keys, ids){
+  var layers = PSFakeDOM.getLayers()
+  if (ids == null) ids = Object.keys(layers);
+  var source = PSFakeDOM.generatePopulateValuesFunction(keys, ids)
+  Function('layers', source)(layers)
+  return layers
+}
+
+PSFakeDOM.generatePopulateValuesFunction = function(keys, ids){
+  var layers = PSFakeDOM.getLayers()
+  if (ids == null) ids = Object.keys(layers);
+  if (!Array.isArray(keys)) keys = [keys]
+  var source = keys.map(function(key){
+    return ids.map(function(id){ return 'layers["' + id + '"][' + JSON.stringify(key) + '] = ' + layers[id]._jsPath +'.'+ key }).join(';\n')
+  }).join('\n')
+  return source + '\nreturn layers'
+}
