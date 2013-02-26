@@ -1214,3 +1214,281 @@ function placePDF(file, transformation){
       var idAntA = charIDToTypeID( "AntA" ); desc10.putBoolean( idAntA, true );
   executeAction( idPlc, desc10, DialogModes.NO );
 }
+
+function selectAllLayers(){
+  var idselectAllLayers = stringIDToTypeID( "selectAllLayers" );
+      var desc50 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref21 = new ActionReference();
+          var idLyr = charIDToTypeID( "Lyr " );
+          var idOrdn = charIDToTypeID( "Ordn" );
+          var idTrgt = charIDToTypeID( "Trgt" );
+          ref21.putEnumerated( idLyr, idOrdn, idTrgt );
+      desc50.putReference( idnull, ref21 );
+  executeAction( idselectAllLayers, desc50, DialogModes.NO );
+}
+
+function refToSelectedLayer(){
+  var ref = new ActionReference();
+  var idLyr = charIDToTypeID( "Lyr " );
+  var idOrdn = charIDToTypeID( "Ordn" );
+  var idTrgt = charIDToTypeID( "Trgt" );
+  return ref
+}
+
+function createRectangleShapeLayer(bounds){
+  if (bounds == null) bounds = {}
+  
+  var idMk = charIDToTypeID( "Mk  " );
+      var desc80 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref31 = new ActionReference();
+          var idcontentLayer = stringIDToTypeID( "contentLayer" );
+          ref31.putClass( idcontentLayer );
+      desc80.putReference( idnull, ref31 );
+      var idUsng = charIDToTypeID( "Usng" );
+          var desc81 = new ActionDescriptor();
+          var idType = charIDToTypeID( "Type" );
+              var desc82 = new ActionDescriptor();
+              var idClr = charIDToTypeID( "Clr " );
+                  var desc83 = new ActionDescriptor();
+                  var idRd = charIDToTypeID( "Rd  " ); desc83.putDouble( idRd, 143.997803 );
+                  var idGrn = charIDToTypeID( "Grn " ); desc83.putDouble( idGrn, 73.998871 );
+                  var idBl = charIDToTypeID( "Bl  " ); desc83.putDouble( idBl, 171.001282 );
+              var idRGBC = charIDToTypeID( "RGBC" ); desc82.putObject( idClr, idRGBC, desc83 );
+          var idsolidColorLayer = stringIDToTypeID( "solidColorLayer" );
+          desc81.putObject( idType, idsolidColorLayer, desc82 );
+          var idShp = charIDToTypeID( "Shp " );
+              var desc84 = new ActionDescriptor();
+              var idTop = charIDToTypeID( "Top " ); var idPxl = charIDToTypeID( "#Pxl" ); desc84.putUnitDouble( idTop, idPxl, bounds.top || 0 );
+              var idLeft = charIDToTypeID( "Left" ); var idPxl = charIDToTypeID( "#Pxl" ); desc84.putUnitDouble( idLeft, idPxl, bounds.left || 0 );
+              var idBtom = charIDToTypeID( "Btom" ); var idPxl = charIDToTypeID( "#Pxl" ); desc84.putUnitDouble( idBtom, idPxl, bounds.bottom || 100 );
+              var idRght = charIDToTypeID( "Rght" ); var idPxl = charIDToTypeID( "#Pxl" ); desc84.putUnitDouble( idRght, idPxl, bounds.right || 100 );
+          var idRctn = charIDToTypeID( "Rctn" ); desc81.putObject( idShp, idRctn, desc84 );
+          var idstrokeStyle = stringIDToTypeID( "strokeStyle" );
+              var desc85 = new ActionDescriptor();
+              var idstrokeStyleVersion = stringIDToTypeID( "strokeStyleVersion" ); desc85.putInteger( idstrokeStyleVersion, 2 );
+              var idstrokeEnabled = stringIDToTypeID( "strokeEnabled" ); desc85.putBoolean( idstrokeEnabled, false );
+              var idfillEnabled = stringIDToTypeID( "fillEnabled" ); desc85.putBoolean( idfillEnabled, true );
+              var idstrokeStyleLineWidth = stringIDToTypeID( "strokeStyleLineWidth" ); var idPnt = charIDToTypeID( "#Pnt" ); desc85.putUnitDouble( idstrokeStyleLineWidth, idPnt, 0 );
+              var idstrokeStyleLineDashOffset = stringIDToTypeID( "strokeStyleLineDashOffset" ); var idPnt = charIDToTypeID( "#Pnt" ); desc85.putUnitDouble( idstrokeStyleLineDashOffset, idPnt, 0.000000 );
+              var idstrokeStyleMiterLimit = stringIDToTypeID( "strokeStyleMiterLimit" ); desc85.putDouble( idstrokeStyleMiterLimit, 100.000000 );
+              var idstrokeStyleLineCapType = stringIDToTypeID( "strokeStyleLineCapType" ); var idstrokeStyleLineCapType = stringIDToTypeID( "strokeStyleLineCapType" ); var idstrokeStyleButtCap = stringIDToTypeID( "strokeStyleButtCap" ); desc85.putEnumerated( idstrokeStyleLineCapType, idstrokeStyleLineCapType, idstrokeStyleButtCap );
+              var idstrokeStyleLineJoinType = stringIDToTypeID( "strokeStyleLineJoinType" ); var idstrokeStyleLineJoinType = stringIDToTypeID( "strokeStyleLineJoinType" ); var idstrokeStyleMiterJoin = stringIDToTypeID( "strokeStyleMiterJoin" ); desc85.putEnumerated( idstrokeStyleLineJoinType, idstrokeStyleLineJoinType, idstrokeStyleMiterJoin );
+              var idstrokeStyleLineAlignment = stringIDToTypeID( "strokeStyleLineAlignment" ); var idstrokeStyleLineAlignment = stringIDToTypeID( "strokeStyleLineAlignment" ); var idstrokeStyleAlignInside = stringIDToTypeID( "strokeStyleAlignInside" ); desc85.putEnumerated( idstrokeStyleLineAlignment, idstrokeStyleLineAlignment, idstrokeStyleAlignInside );
+              var idstrokeStyleScaleLock = stringIDToTypeID( "strokeStyleScaleLock" ); desc85.putBoolean( idstrokeStyleScaleLock, false );
+              var idstrokeStyleStrokeAdjust = stringIDToTypeID( "strokeStyleStrokeAdjust" ); desc85.putBoolean( idstrokeStyleStrokeAdjust, false );
+              var idstrokeStyleLineDashSet = stringIDToTypeID( "strokeStyleLineDashSet" ); var list2 = new ActionList(); desc85.putList( idstrokeStyleLineDashSet, list2 );
+              var idstrokeStyleBlendMode = stringIDToTypeID( "strokeStyleBlendMode" ); var idBlnM = charIDToTypeID( "BlnM" ); var idNrml = charIDToTypeID( "Nrml" ); desc85.putEnumerated( idstrokeStyleBlendMode, idBlnM, idNrml );
+              var idstrokeStyleOpacity = stringIDToTypeID( "strokeStyleOpacity" ); var idPrc = charIDToTypeID( "#Prc" ); desc85.putUnitDouble( idstrokeStyleOpacity, idPrc, 100.000000 );
+              var idstrokeStyleContent = stringIDToTypeID( "strokeStyleContent" );
+                  var desc86 = new ActionDescriptor();
+                  var idClr = charIDToTypeID( "Clr " );
+                      var desc87 = new ActionDescriptor();
+                      var idRd = charIDToTypeID( "Rd  " ); desc87.putDouble( idRd, 111.002197 );
+                      var idGrn = charIDToTypeID( "Grn " ); desc87.putDouble( idGrn, 181.001129 );
+                      var idBl = charIDToTypeID( "Bl  " ); desc87.putDouble( idBl, 83.998718 );
+                  var idRGBC = charIDToTypeID( "RGBC" ); desc86.putObject( idClr, idRGBC, desc87 );
+              var idsolidColorLayer = stringIDToTypeID( "solidColorLayer" ); desc85.putObject( idstrokeStyleContent, idsolidColorLayer, desc86 );
+              var idstrokeStyleResolution = stringIDToTypeID( "strokeStyleResolution" ); desc85.putDouble( idstrokeStyleResolution, 72.000000 );
+          var idstrokeStyle = stringIDToTypeID( "strokeStyle" ); desc81.putObject( idstrokeStyle, idstrokeStyle, desc85 );
+      var idcontentLayer = stringIDToTypeID( "contentLayer" ); desc80.putObject( idUsng, idcontentLayer, desc81 );
+  executeAction( idMk, desc80, DialogModes.NO );
+}
+
+function unselectLayerByRef(layerRef){
+  var idslct = charIDToTypeID( "slct" );
+      var desc135 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+      desc135.putReference( idnull, layerRef );
+      var idselectionModifier = stringIDToTypeID( "selectionModifier" );
+      var idselectionModifierType = stringIDToTypeID( "selectionModifierType" );
+      var idremoveFromSelection = stringIDToTypeID( "removeFromSelection" );
+      desc135.putEnumerated( idselectionModifier, idselectionModifierType, idremoveFromSelection );
+      var idMkVs = charIDToTypeID( "MkVs" );
+      desc135.putBoolean( idMkVs, false );
+  executeAction( idslct, desc135, DialogModes.NO );
+}
+
+function createLayerSet(name){
+  var idMk = charIDToTypeID( "Mk  " );
+      var desc141 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref81 = new ActionReference();
+          var idlayerSection = stringIDToTypeID( "layerSection" );
+          ref81.putClass( idlayerSection );
+      desc141.putReference( idnull, ref81 );
+      var idUsng = charIDToTypeID( "Usng" );
+          var desc142 = new ActionDescriptor();
+          var idNm = charIDToTypeID( "Nm  " ); desc142.putString( idNm, name );
+          // var idOpct = charIDToTypeID( "Opct" ); var idPrc = charIDToTypeID( "#Prc" ); desc142.putUnitDouble( idOpct, idPrc, opacity==null? 1 : opacity );
+          // var idClr = charIDToTypeID( "Clr " ); var idClr = charIDToTypeID( "Clr " ); var idBl = charIDToTypeID( "Bl  " ); desc142.putEnumerated( idClr, idClr, idBl );
+      var idlayerSection = stringIDToTypeID( "layerSection" );
+      desc141.putObject( idUsng, idlayerSection, desc142 );
+  executeAction( idMk, desc141, DialogModes.NO );
+}
+
+function setLayerIndex(layerRef, index){
+  var idmove = charIDToTypeID( "move" );
+      var desc152 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" ); desc152.putReference( idnull, layerRef );
+      var idT = charIDToTypeID( "T   " );
+          var ref85 = new ActionReference();
+          var idLyr = charIDToTypeID( "Lyr " ); ref85.putIndex( idLyr, index );
+      desc152.putReference( idT, ref85 );
+      var idAdjs = charIDToTypeID( "Adjs" ); desc152.putBoolean( idAdjs, false );
+      var idVrsn = charIDToTypeID( "Vrsn" ); desc152.putInteger( idVrsn, 5 );
+  executeAction( idmove, desc152, DialogModes.NO );
+}
+
+function layerRef_setOpacity(layerRef, opacity){
+  var idsetd = charIDToTypeID( "setd" );
+      var desc3 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+      desc3.putReference( idnull, layerRef );
+      var idT = charIDToTypeID( "T   " );
+          var desc4 = new ActionDescriptor();
+          var idOpct = charIDToTypeID( "Opct" );
+          var idPrc = charIDToTypeID( "#Prc" );
+          desc4.putUnitDouble( idOpct, idPrc, opacity );
+      var idLyr = charIDToTypeID( "Lyr " );
+      desc3.putObject( idT, idLyr, desc4 );
+  executeAction( idsetd, desc3, DialogModes.NO );
+}
+
+function scaleSmartObjectInnards(layerRef, scale){
+  
+}
+
+function ao_LayerStyle(){}
+
+ao_LayerStyle.save = function(file){
+  file = new File(file)
+  var idsetd = charIDToTypeID( "setd" );
+      var desc2 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" ); desc2.putPath( idnull, file );
+      var idT = charIDToTypeID( "T   " );
+          var ref1 = new ActionReference();
+          var idPrpr = charIDToTypeID( "Prpr" ); var idStyl = charIDToTypeID( "Styl" ); ref1.putProperty( idPrpr, idStyl );
+          var idcapp = charIDToTypeID( "capp" ); var idOrdn = charIDToTypeID( "Ordn" ); var idTrgt = charIDToTypeID( "Trgt" ); ref1.putEnumerated( idcapp, idOrdn, idTrgt );
+      desc2.putReference( idT, ref1 );
+  executeAction( idsetd, desc2, DialogModes.NO );
+}
+
+ao_LayerStyle.replace = function(file){
+  file = new File(file)
+  if (!file.exists) throw Error('file "' + file + '" does not exist')
+  var idsetd = charIDToTypeID( "setd" );
+      var desc5 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref5 = new ActionReference();
+          var idPrpr = charIDToTypeID( "Prpr" );
+          var idStyl = charIDToTypeID( "Styl" );
+          ref5.putProperty( idPrpr, idStyl );
+          var idcapp = charIDToTypeID( "capp" );
+          var idOrdn = charIDToTypeID( "Ordn" );
+          var idTrgt = charIDToTypeID( "Trgt" );
+          ref5.putEnumerated( idcapp, idOrdn, idTrgt );
+      desc5.putReference( idnull, ref5 );
+      var idT = charIDToTypeID( "T   " );
+      desc5.putPath( idT, file);
+  executeAction( idsetd, desc5, DialogModes.NO );
+}
+
+ao_LayerStyle.clearFrom = function(layerRef){
+  if (layerRef == null) layerRef = selectedLayersRef()
+  var idclearStyle = stringIDToTypeID( "clearStyle" );
+      var desc54 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+      desc54.putReference( idnull, layerRef );
+  executeAction( idclearStyle, desc54, DialogModes.NO );
+}
+
+ao_LayerStyle.applyTo = function(styleName, layerRef){
+  if (layerRef == null) layerRef = selectedLayersRef()
+  
+  var idASty = charIDToTypeID( "ASty" );
+      var desc3 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref2 = new ActionReference();
+          var idStyl = charIDToTypeID( "Styl" );
+          ref2.putName( idStyl, styleName );
+      desc3.putReference( idnull, ref2 );
+      var idT = charIDToTypeID( "T   " );
+      desc3.putReference( idT, layerRef );
+  executeAction( idASty, desc3, DialogModes.NO );
+}
+
+ao_LayerStyle.makeFromLayer = function(name, layerRef){
+  if (layerRef == null) layerRef = selectedLayersRef()
+  
+  var idMk = charIDToTypeID( "Mk  " );
+      var desc17 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref20 = new ActionReference();
+          var idStyl = charIDToTypeID( "Styl" ); ref20.putClass( idStyl );
+      desc17.putReference( idnull, ref20 );
+      var idNm = charIDToTypeID( "Nm " ); desc17.putString( idNm, name );
+      var idUsng = charIDToTypeID( "Usng" ); desc17.putReference( idUsng, layerRef );
+      var idblendOptions = stringIDToTypeID( "blendOptions" ); desc17.putBoolean( idblendOptions, false );
+      var idLefx = charIDToTypeID( "Lefx" ); desc17.putBoolean( idLefx, true );
+  executeAction( idMk, desc17, DialogModes.NO );
+}
+
+ao_LayerStyle.clearAll = function(){
+  var idDlt = charIDToTypeID( "Dlt " );
+      var desc60 = new ActionDescriptor();
+      var idnull = charIDToTypeID( "null" );
+          var ref56 = new ActionReference();
+          var idStyl = charIDToTypeID( "Styl" ); ref56.putIndex( idStyl, 1 );
+      desc60.putReference( idnull, ref56 );
+  
+  var done = false
+  while (!done){
+    try {
+      executeAction( idDlt, desc60, DialogModes.NO );
+    } catch(e){done = true}
+  }
+}
+
+ao_LayerStyle.setFillFor = function(fill, layerRef){
+  if (layerRef == null) layerRef = selectedLayersRef()
+  
+    ao_LayerStyle.refFrom().putObject(stringIDToTypeID('solidFill'))
+}
+
+function ao_LayerStyleFill(color){
+  if (!(color instanceof ActionDescriptor)){
+    var _color = color
+    if (_color == null) _color = {}
+    color = new ActionDescriptor();
+    var idRd = charIDToTypeID( "Rd " ); color.putDouble( idRd, _color.red || 255.000000 );
+    var idGrn = charIDToTypeID( "Grn " ); color.putDouble( idGrn, _color.green || _color.grain || 0.000000 );
+    var idBl = charIDToTypeID( "Bl " ); color.putDouble( idBl, _color.blue || 0.000000 );
+  }
+  var idSoFi = charIDToTypeID( "SoFi" );
+      var desc69 = new ActionDescriptor();
+      var idenab = charIDToTypeID( "enab" );
+      desc69.putBoolean( idenab, true );
+      var idMd = charIDToTypeID( "Md  " );
+      var idBlnM = charIDToTypeID( "BlnM" );
+      var idNrml = charIDToTypeID( "Nrml" );
+      desc69.putEnumerated( idMd, idBlnM, idNrml );
+      var idOpct = charIDToTypeID( "Opct" );
+      var idPrc = charIDToTypeID( "#Prc" );
+      desc69.putUnitDouble( idOpct, idPrc, 100.000000 );
+      var idClr = charIDToTypeID( "Clr " );
+      var idRGBC = charIDToTypeID( "RGBC" ); desc69.putObject( idClr, idRGBC, color );
+  var idSoFi = charIDToTypeID( "SoFi" );
+  return desc69
+}
+
+
+ao_LayerStyle.setStyleDescriptorOn = function(styleDesc, layerRef){}
+
+ao_LayerStyle.refFrom = function(layerRef){
+  if (layerRef == null) layerRef = selectedLayersRef()
+  return executeActionGet(layerRef).getObjectValue(stringIDToTypeID('layerEffects'))
+}
+
+
