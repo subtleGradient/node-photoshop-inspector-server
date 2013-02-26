@@ -30,8 +30,9 @@ PSFakeDOM.invokeToJSON = function invokeToJSON(layer){ return layer.toJSON() }
 
 PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(layers, root){
   var layersByID = {}, parentId
-  if (root == null) root = {layerID:-1, _childLayerIDs:[]}
+  if (root == null) root = {layerID:-1, _childLayerIDs:[], _childCount:0, _jsPath:'app.activeDocument', _namePath:[app.activeDocument.name]}
   parentId = root.layerID
+  childIndex = 0
   layersByID[parentId] = root
   
   layers.filter(Boolean).forEach(function(layer, index){
@@ -42,14 +43,19 @@ PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(l
       parentId = layersByID[parentId]._parentId
       return
     }
+    
     // Normal Layer
     layersByID[layer.layerID] = layer
     layer._parentId = parentId
+    layer._childIndex = layersByID[parentId]._childCount++
+    layer._namePath = layersByID[parentId]._namePath.concat(layer.name)
+    layer._jsPath = layersByID[parentId]._jsPath + '.layers[' + layer._childIndex + ']'
     if (!layersByID[parentId]._childLayerIDs) layersByID[parentId]._childLayerIDs = []
     layersByID[parentId]._childLayerIDs.push(layer.layerID)
     
     // Layer Group
     if (layer.layerSection == 'layerSectionStart'){
+      layer._childCount = 0
       parentId = layer.layerID
     }
   })
@@ -126,6 +132,11 @@ PSFakeDOM.getLayers = function getLayers(LayerKeyWhitelist){
     })
   )
   return layers
+}
+
+PSFakeDOM.getLayersArray = function(){
+  var layers = PSFakeDOM.getLayers()
+  return Object.keys(layers).map(function(id){ return layers[id] })
 }
 
 PSFakeDOM.getDocumentNode = function getDocumentNode(){
