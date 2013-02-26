@@ -1184,3 +1184,33 @@ function renameLayer(layerRef, name){
       desc710.putObject( idT, idLyr, desc711 );
   executeAction( idsetd, desc710, DialogModes.NO );
 }
+
+function placePDF(file, transformation){
+  file = new File(file)
+  if (!file.exists) throw Error('file not found "' + file + '"');
+  if (transformation == null) transformation = {}
+  
+  var idPlc = charIDToTypeID( "Plc " );
+      var desc10 = new ActionDescriptor();
+      var idAs = charIDToTypeID( "As  " );
+          var desc11 = new ActionDescriptor();
+          var idfsel = charIDToTypeID( "fsel" ); var idpdfSelection = stringIDToTypeID( "pdfSelection" ); var idpage = stringIDToTypeID( "page" ); desc11.putEnumerated( idfsel, idpdfSelection, idpage );
+          var idPgNm = charIDToTypeID( "PgNm" ); desc11.putInteger( idPgNm, 1 );
+          var idCrop = charIDToTypeID( "Crop" ); var idcropTo = stringIDToTypeID( "cropTo" ); var idmediaBox = stringIDToTypeID( "mediaBox" ); desc11.putEnumerated( idCrop, idcropTo, idmediaBox );
+      var idPDFG = charIDToTypeID( "PDFG" ); desc10.putObject( idAs, idPDFG, desc11 );
+      var idnull = charIDToTypeID( "null" ); desc10.putPath( idnull, file);
+      
+      var idFTcs = charIDToTypeID( "FTcs" ); var idQCSt = charIDToTypeID( "QCSt" ); var idQcszero = charIDToTypeID( "Qcs0" ); desc10.putEnumerated( idFTcs, idQCSt, idQcszero );
+      
+      var idOfst = charIDToTypeID( "Ofst" );
+          var desc12 = new ActionDescriptor();
+          var idHrzn = charIDToTypeID( "Hrzn" ); var idPxl = charIDToTypeID( "#Pxl" ); desc12.putUnitDouble( idHrzn, idPxl, transformation.translateX || 0 );
+          var idVrtc = charIDToTypeID( "Vrtc" ); var idPxl = charIDToTypeID( "#Pxl" ); desc12.putUnitDouble( idVrtc, idPxl, transformation.translateY || 0 );
+      var idOfst = charIDToTypeID( "Ofst" ); desc10.putObject( idOfst, idOfst, desc12 );
+      
+      var idWdth = charIDToTypeID( "Wdth" ); var idPrc = charIDToTypeID( "#Prc" ); desc10.putUnitDouble( idWdth, idPrc, (transformation.scaleX || transformation.scale || 1)*100 );
+      var idHght = charIDToTypeID( "Hght" ); var idPrc = charIDToTypeID( "#Prc" ); desc10.putUnitDouble( idHght, idPrc, (transformation.scaleY || transformation.scale || 1)*100 );
+      
+      var idAntA = charIDToTypeID( "AntA" ); desc10.putBoolean( idAntA, true );
+  executeAction( idPlc, desc10, DialogModes.NO );
+}
