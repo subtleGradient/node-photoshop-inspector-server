@@ -183,3 +183,21 @@ PSFakeDOM.selectLayerByRef = function selectLayerByRef(layerRef){
   executeAction( idslct, desc104, DialogModes.NO );
 }
 
+PSFakeDOM.findUniqueStyles = function findUniqueStyles(){
+  var styles = []
+  var _uniqueStyles = {}
+  var layers = PSFakeDOM.getLayerActionDescriptors().map(PSFakeDOM.invokeToJSON)
+  
+  layers.forEach(function(layer){
+    var id = uniqueLayerStyleId(layer)
+    if (!_uniqueStyles[id]){
+      _uniqueStyles[id] = {layerIDs:[], layerEffects:layer.layerEffects, adjustment:layer.adjustment, opacity:layer.opacity}
+      styles.push(_uniqueStyles[id])
+    }
+    _uniqueStyles[id].layerIDs.push(layer.layerID)
+  })
+  function uniqueLayerStyleId(layer){return JSON.stringify([layer.layerEffects, layer.adjustment, layer.opacity])}
+  
+  return styles
+}
+
