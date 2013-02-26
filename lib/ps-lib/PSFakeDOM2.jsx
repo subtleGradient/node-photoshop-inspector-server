@@ -115,7 +115,10 @@ PSFakeDOM.LayerKeyWhitelist = {
 
 PSFakeDOM.LayerKeyBlacklist = {}
 
+PSFakeDOM._cache = null
+
 PSFakeDOM.getLayers = function getLayers(LayerKeyWhitelist){
+  if (PSFakeDOM._cache) return PSFakeDOM._cache;
   if (LayerKeyWhitelist == null) LayerKeyWhitelist = PSFakeDOM.LayerKeyWhitelist
   var layers = PSFakeDOM.layers_populateChildLayerIDs(
     PSFakeDOM.getLayerActionDescriptors().map(PSFakeDOM.invokeToJSON).map(function(layer){
@@ -131,7 +134,7 @@ PSFakeDOM.getLayers = function getLayers(LayerKeyWhitelist){
       return flatLayer
     })
   )
-  return layers
+  return PSFakeDOM._cache = layers
 }
 
 PSFakeDOM.getLayersArray = function(){
