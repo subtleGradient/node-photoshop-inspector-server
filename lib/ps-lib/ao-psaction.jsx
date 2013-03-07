@@ -990,6 +990,17 @@ function refToCurrentPath(){
   return ref163
 }
 
+function fs_readFileSync(path){
+  var file = new File(path)
+  file.open('r')
+  try {
+    var innards = file.read()
+  }
+  finally {
+    file.close()
+  }
+  return innards
+}
 function fs_writeFileSync(path, data){
   var file = new File(path);
   file.open('w');
