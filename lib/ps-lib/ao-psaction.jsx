@@ -1215,17 +1215,18 @@ function placePDF(file, transformation){
   executeAction( idPlc, desc10, DialogModes.NO );
 }
 
-function selectAllLayers(){
-  var idselectAllLayers = stringIDToTypeID( "selectAllLayers" );
-      var desc50 = new ActionDescriptor();
-      var idnull = charIDToTypeID( "null" );
-          var ref21 = new ActionReference();
-          var idLyr = charIDToTypeID( "Lyr " );
-          var idOrdn = charIDToTypeID( "Ordn" );
-          var idTrgt = charIDToTypeID( "Trgt" );
-          ref21.putEnumerated( idLyr, idOrdn, idTrgt );
-      desc50.putReference( idnull, ref21 );
-  executeAction( idselectAllLayers, desc50, DialogModes.NO );
+function selectAllLayers() {
+  executeAction(stringIDToTypeID("selectAllLayers"), (function(config) {
+    var descriptor = new ActionDescriptor;
+    if ("null" in config) descriptor.putReference(stringIDToTypeID("null"), config["null"]);
+    return descriptor
+  })({
+    "null": (function(config) {
+      var ref = new ActionReference;
+      if (0 in config) ref.putEnumerated(stringIDToTypeID("layer"), stringIDToTypeID("ordinal"), config[0]);
+      return ref
+    })([stringIDToTypeID("targetEnum")])
+  }), DialogModes.NO);
 }
 
 function refToSelectedLayer(){
@@ -1310,22 +1311,32 @@ function unselectLayerByRef(layerRef){
   executeAction( idslct, desc135, DialogModes.NO );
 }
 
-function createLayerSet(name){
-  var idMk = charIDToTypeID( "Mk  " );
-      var desc141 = new ActionDescriptor();
-      var idnull = charIDToTypeID( "null" );
-          var ref81 = new ActionReference();
-          var idlayerSection = stringIDToTypeID( "layerSection" );
-          ref81.putClass( idlayerSection );
-      desc141.putReference( idnull, ref81 );
-      var idUsng = charIDToTypeID( "Usng" );
-          var desc142 = new ActionDescriptor();
-          var idNm = charIDToTypeID( "Nm  " ); desc142.putString( idNm, name );
-          // var idOpct = charIDToTypeID( "Opct" ); var idPrc = charIDToTypeID( "#Prc" ); desc142.putUnitDouble( idOpct, idPrc, opacity==null? 1 : opacity );
-          // var idClr = charIDToTypeID( "Clr " ); var idClr = charIDToTypeID( "Clr " ); var idBl = charIDToTypeID( "Bl  " ); desc142.putEnumerated( idClr, idClr, idBl );
-      var idlayerSection = stringIDToTypeID( "layerSection" );
-      desc141.putObject( idUsng, idlayerSection, desc142 );
-  executeAction( idMk, desc141, DialogModes.NO );
+function createLayerSet(name, layerRef){
+  if (layerRef == null) layerRef = selectedLayersRef()
+  
+  var config = {
+    "null":	(function(config){
+      var ref = new ActionReference;
+      if (0 in config)	ref.putClass(config[0]);
+      return ref
+    })([stringIDToTypeID("layerSection")]),
+    "from":	layerRef
+  }
+  
+  if (name)
+    config.using = (function(config){
+      var descriptor = new ActionDescriptor;
+      if ("name" in config)	descriptor.putString(stringIDToTypeID("name"), config["name"]);
+      return descriptor
+    })({ "name": name })
+  
+  executeAction(stringIDToTypeID("make"), (function(config){
+  	var descriptor = new ActionDescriptor;
+  	if ("null" in config)	descriptor.putReference(stringIDToTypeID("null"), config["null"]);
+  	if ("from" in config)	descriptor.putReference(stringIDToTypeID("from"), config["from"]);
+  	if ("using" in config)	descriptor.putObject(stringIDToTypeID("using"), stringIDToTypeID("layerSection"), config["using"]);
+  	return descriptor
+  })(config), DialogModes.NO);
 }
 
 function setLayerIndex(layerRef, index){
@@ -1407,16 +1418,11 @@ ao_LayerStyle.clearFrom = function(layerRef){
 ao_LayerStyle.applyTo = function(styleName, layerRef){
   if (layerRef == null) layerRef = selectedLayersRef()
   
-  var idASty = charIDToTypeID( "ASty" );
-      var desc3 = new ActionDescriptor();
-      var idnull = charIDToTypeID( "null" );
-          var ref2 = new ActionReference();
-          var idStyl = charIDToTypeID( "Styl" );
-          ref2.putName( idStyl, styleName );
-      desc3.putReference( idnull, ref2 );
-      var idT = charIDToTypeID( "T   " );
-      desc3.putReference( idT, layerRef );
-  executeAction( idASty, desc3, DialogModes.NO );
+  executeAction(stringIDToTypeID("applyStyle"), (function(config){ var descriptor = new ActionDescriptor; if ("null" in config) descriptor.putReference(stringIDToTypeID("null"), config["null"]); if ("to" in config) descriptor.putReference(stringIDToTypeID("to"), config["to"]); return descriptor })({
+  	"null":	(function(config){ var ref = new ActionReference; if (0 in config) ref.putName(stringIDToTypeID("style"), config[0]); return ref })
+    ([styleName]),
+  	"to":	layerRef
+  }), DialogModes.NO);
 }
 
 ao_LayerStyle.makeFromLayer = function(name, layerRef){
