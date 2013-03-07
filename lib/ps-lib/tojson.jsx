@@ -15,15 +15,16 @@ ActionList.prototype.toSource = function ActionList$toSource(){
   
   while (++index < length){
     type = ActionList.ao_getTypeString(this.getType(index))
-    valueType = ActionList.ao_getTypeString(this.ao_getValueType(index))
+    valueType = this.ao_getValueType(index)
     if (valueType === type) valueType = null
     
     config[index] = this.ao_getValue(index)
     
-    if (type == 'Object')
-      source.push('if (' + index + ' in config)\tlist.put' + type + '(stringIDToTypeID("' + valueType + '"), config[' + index + '])')
-    else if (valueType)
-      source.push('if (' + index + ' in config)\tlist.put' + type + '(stringIDToTypeID("' + valueType + '"), stringIDToTypeID(config[' + index + ']))')
+    // if (type == 'Object')
+    // else
+    if (valueType)
+      source.push('if (' + index + ' in config)\tlist.put' + type + '('+valueType.toSource()+', config[' + index + '])')
+      // source.push('if (' + index + ' in config)\tlist.put' + type + '('+valueType.toSource()+', stringIDToTypeID(config[' + index + ']))')
     else
       source.push('if (' + index + ' in config)\tlist.put' + type + '(config[' + index + '])')
   }
@@ -34,29 +35,62 @@ ActionList.prototype.toSource = function ActionList$toSource(){
 
 ActionDescriptor.prototype.toSource = function ActionDescriptor$toSource(){
   var source = []
-  var index = -1, length = this.count, typeID, config = {}
-  var key, type, valueType
+  var index = -1, length = this.count, typeID, config = new ao_Object
+  var key, value, type, valueType, valueStringID
+  var keyObj
   
   while (++index < length){
     typeID = this.getKey(index)
-    key = typeIDToStringID(typeID)
+    keyObj = ActionDescriptor.parseTypeID(typeID)
+    value = config[keyObj.configKey] = this.ao_getValue(typeID)
+    
     type = ActionDescriptor.ao_getTypeString(this.getType(typeID))
-    valueType = ActionDescriptor.ao_getTypeString(this.ao_getValueType(typeID))
+    valueType = this.ao_getValueType(typeID)
+    if (!(valueType instanceof ao_ActionType)) valueType = ActionDescriptor.ao_getTypeString(valueType)
     if (valueType === type) valueType = null
     
-    config[key] = this.ao_getValue(typeID)
+    try {
+      valueStringID = ActionDescriptor.parseTypeID(value).stringID || null
+    }
+    catch(e){
+      valueStringID = null
+    }
+    try {
+      valueStringID = value.stringID
+    }
+    catch(e){
+      valueStringID = null
+    }
+    if (valueStringID){
+      value = config[keyObj.configKey] = valueStringID
+    }
     
-    if (type == 'Object')
-      source.push('if ("' + key + '" in config)\tdescriptor.put' + type + '(stringIDToTypeID("' + key + '"), stringIDToTypeID("' + valueType + '"), config.' + key + ')')
+    if (valueType && valueType.toSource() === '({})') throw Error(valueType.toSource())
+    // if (valueType && valueType.stringID);
+    
+    if (valueStringID && valueType)
+      source.push('if ('+keyObj.js_in+')\tdescriptor.put' + type + '('+ keyObj.toSource() +', ' + valueType.toSource() + ', stringIDToTypeID(' + keyObj.js_get + '))')
     else if (valueType)
-      source.push('if ("' + key + '" in config)\tdescriptor.put' + type + '(stringIDToTypeID("' + key + '"), stringIDToTypeID("' + valueType + '"), stringIDToTypeID(config.' + key + '))')
+      source.push('if ('+keyObj.js_in+')\tdescriptor.put' + type + '('+ keyObj.toSource() +', ' + valueType.toSource() + ', ' + keyObj.js_get + ')')
     else
-      source.push('if ("' + key + '" in config)\tdescriptor.put' + type + '(stringIDToTypeID("' + key + '"), config.' + key + ')')
+      source.push('if ('+keyObj.js_in+')\tdescriptor.put' + type + '('+ keyObj.toSource() +', ' + keyObj.js_get + ')')
   }
   source.unshift('var descriptor = new ActionDescriptor')
   source.push('return descriptor')
   return '(function(config){\n\t' + source.join(';\n\t') + '\n})' + config.toSource() + ''
 }
+
+function ao_ActionType(typeID){
+  if (!(this instanceof ao_ActionType)) return new ao_ActionType(typeID)
+  this.typeID = typeID
+  this.stringID = typeIDToStringID(typeID)
+  this.charID = typeIDToCharID(typeID)
+}
+ao_ActionType.prototype.toSource = function(){
+  if (this.stringID === '') return 'charIDToTypeID(' + JSON.stringify(this.charID) + ')'
+  return 'stringIDToTypeID(' + JSON.stringify(this.stringID) + ')'
+}
+
 
 ActionReference.prototype.toSource = function ActionReference$toSource(){
   var ref = this
@@ -65,21 +99,21 @@ ActionReference.prototype.toSource = function ActionReference$toSource(){
   var key, type, valueType, desiredClass
   while (ref){
     ++index
-    try{desiredClass = typeIDToStringID(ref.getDesiredClass())}catch(e){break;}
+    try{desiredClass = ao_ActionType(ref.getDesiredClass())}catch(e){break;}
     type = ActionReference.ao_getTypeString(ref.getForm())
-    try{valueType = ref.getEnumeratedType()}catch(e){}
+    try{valueType = ao_ActionType(ref.getEnumeratedType())}catch(e){}
     // if (valueType === type) valueType = null
     
     config[index] = ref.ao_getValue()
     
     if (type == 'Class'){
-      source.push('if (' + index + ' in config)\tref.put' + type + '(stringIDToTypeID(config[' + index + ']))')
-      config[index] = typeIDToStringID(config[index])
+      source.push('if (' + index + ' in config)\tref.put' + type + '(config[' + index + '])')
+      config[index] = desiredClass
     }
     else if (valueType)
-      source.push('if (' + index + ' in config)\tref.put' + type + '(stringIDToTypeID("' + desiredClass + '"), stringIDToTypeID("' + typeIDToStringID(valueType) + '"), stringIDToTypeID(config[' + index + ']))')
+      source.push('if (' + index + ' in config)\tref.put' + type + '(' + desiredClass.toSource() + ', ' + valueType.toSource() + ', config[' + index + '])')
     else
-      source.push('if (' + index + ' in config)\tref.put' + type + '(stringIDToTypeID("' + desiredClass + '"), config[' + index + '])')
+      source.push('if (' + index + ' in config)\tref.put' + type + '(' + desiredClass.toSource() + ', config[' + index + '])')
     
     try{ref = ref.getContainer()}
     catch(error){break;}
@@ -127,9 +161,9 @@ ActionDescriptor.keys = function(descriptor, keys){
 ActionList.prototype.ao_getValueType =
 ActionDescriptor.prototype.ao_getValueType = function(key){
   var _DescValueType = this.getType(key)
-  if (_DescValueType == DescValueType.ENUMERATEDTYPE) return this.getEnumerationType(key)
-  if (_DescValueType == DescValueType.OBJECTTYPE) return this.getObjectType(key)
-  if (_DescValueType == DescValueType.UNITDOUBLE) return this.getUnitDoubleType(key)
+  if (_DescValueType == DescValueType.ENUMERATEDTYPE) return ao_ActionType(this.getEnumerationType(key))
+  if (_DescValueType == DescValueType.OBJECTTYPE) return ao_ActionType(this.getObjectType(key))
+  if (_DescValueType == DescValueType.UNITDOUBLE) return ao_ActionType(this.getUnitDoubleType(key))
   return _DescValueType
 }
 
@@ -138,9 +172,9 @@ ActionDescriptor.prototype.ao_getValue = function(key){
   var _DescValueType = this.getType(key)
   if (_DescValueType == DescValueType.ALIASTYPE) return this.getPath(key)
   else if (_DescValueType == DescValueType.BOOLEANTYPE) return this.getBoolean(key)
-  else if (_DescValueType == DescValueType.CLASSTYPE) return this.getClass(key)
+  else if (_DescValueType == DescValueType.CLASSTYPE) return ao_ActionType(this.getClass(key))
   else if (_DescValueType == DescValueType.DOUBLETYPE) return this.getDouble(key)
-  else if (_DescValueType == DescValueType.ENUMERATEDTYPE) return typeIDToStringID(this.getEnumerationValue(key))
+  else if (_DescValueType == DescValueType.ENUMERATEDTYPE) return ao_ActionType(this.getEnumerationValue(key))
   else if (_DescValueType == DescValueType.INTEGERTYPE) return this.getInteger(key)
   else if (_DescValueType == DescValueType.LARGEINTEGERTYPE) return this.getLargeInteger(key)
   else if (_DescValueType == DescValueType.LISTTYPE) return this.getList(key)
@@ -149,7 +183,7 @@ ActionDescriptor.prototype.ao_getValue = function(key){
   else if (_DescValueType == DescValueType.REFERENCETYPE) return this.getReference(key)
   else if (_DescValueType == DescValueType.STRINGTYPE) return this.getString(key)
   else if (_DescValueType == DescValueType.UNITDOUBLE) return this.getUnitDoubleValue(key)
-  return
+  throw Error('unknown type');
 }
 
 ActionList.ao_getTypeString =
@@ -167,7 +201,7 @@ ActionDescriptor.ao_getTypeString = function(_DescValueType){
   else if (_DescValueType == DescValueType.REFERENCETYPE) return 'Reference'
   else if (_DescValueType == DescValueType.STRINGTYPE) return 'String'
   else if (_DescValueType == DescValueType.UNITDOUBLE) return 'UnitDouble'
-  return typeIDToStringID(_DescValueType)
+  throw Error('unknown type');
 }
 
 ActionDescriptor.typeIDFromKey = function(key, fallbackTypeID){
@@ -184,6 +218,31 @@ ActionDescriptor.typeIDFromKey = function(key, fallbackTypeID){
   else parsed.typeID = stringIDToTypeID(key)
   parsed.charID = typeIDToCharID(parsed.typeID)
   parsed.stringID = typeIDToStringID(parsed.typeID)
+  return parsed
+}
+
+ActionDescriptor.parseTypeID = function(typeID){
+  var parsed = {typeID:typeID}
+  parsed.stringID = typeIDToStringID(typeID)
+  parsed.charID = typeIDToCharID(typeID)
+  parsed.configKey = parsed.stringID || '^' + parsed.charID
+  parsed.configKey_isValidToken = false // /^[_$a-z][_$a-z0-9]*$/i.test(parsed.configKey)
+  
+  parsed.js_typeID = parsed.stringID
+    ? 'stringIDToTypeID(' + JSON.stringify(parsed.stringID) + ')'
+    : 'charIDToTypeID(' + JSON.stringify(parsed.charID) + ')'
+  
+  parsed.js_in = JSON.stringify(parsed.configKey) + ' in config'
+  parsed.js_get = parsed.configKey_isValidToken
+    ? 'config.' + parsed.configKey
+    : 'config[' + JSON.stringify(parsed.configKey) + ']'
+  parsed.js_set = parsed.js_get + ' = '
+  
+  
+  // parsed.toJSON = function(){return {toString:this.toSource.bind(this)}}
+  // parsed.toString = function(){return this.stringID}
+  parsed.valueOf = function(){return this.js_typeID}
+  parsed.toSource = function(){return this.js_typeID}
   return parsed
 }
 
@@ -245,14 +304,14 @@ ActionReference.prototype.toJSON = function(){
 
 ActionReference.prototype.ao_getValue = function(){
   var _ReferenceFormType = this.getForm()
-  if (_ReferenceFormType == ReferenceFormType.CLASSTYPE) return this.getDesiredClass()
-  if (_ReferenceFormType == ReferenceFormType.ENUMERATED) return typeIDToStringID(this.getEnumeratedValue())
+  if (_ReferenceFormType == ReferenceFormType.CLASSTYPE) return ao_ActionType(this.getDesiredClass())
+  if (_ReferenceFormType == ReferenceFormType.ENUMERATED) return ao_ActionType(this.getEnumeratedValue())
   if (_ReferenceFormType == ReferenceFormType.IDENTIFIER) return this.getIdentifier()
   if (_ReferenceFormType == ReferenceFormType.INDEX) return this.getIndex()
   if (_ReferenceFormType == ReferenceFormType.NAME) return this.getName()
   if (_ReferenceFormType == ReferenceFormType.OFFSET) return this.getOffset()
-  if (_ReferenceFormType == ReferenceFormType.PROPERTY) return typeIDToStringID(this.getProperty())
-  return
+  if (_ReferenceFormType == ReferenceFormType.PROPERTY) return ao_ActionType(this.getProperty())
+  throw Error('unknown type');
 }
 
 ActionReference.prototype.ao_putValue =
@@ -344,6 +403,10 @@ Object.defineProperty(Error.prototype, 'toJSON', toJSON_descriptor)
 Object.defineProperty(File.prototype, 'toJSON', { enumerable:false, value: function(){ return this.fsName } })
 Object.defineProperty(Folder.prototype, 'toJSON', { enumerable:false, value: function(){ return this.fsName } })
 
+File.prototype.toSource = Folder.prototype.toSource = function() {
+  return 'new ' + this.reflect.name + '(' + JSON.stringify(this.toJSON()) + ')'
+}
+
 var toString_toJSON_descriptor = {
   enumerable: false,
   value: function(){
@@ -359,3 +422,24 @@ Object.defineProperty(Array.prototype, 'toJSON', { enumerable:false, value: func
 
 // Object.defineProperty(Object.prototype, 'ao_keys', { enumerable:false, value:function(){ return Object.keys(this) } })
 
+function ao_Object(){
+  if (!(this instanceof ao_Object)) return new ao_Object
+}
+ao_Object.prototype.toSource = function(){
+  var source = []
+  Object.keys(this).forEach(function(key){
+    source.push(JSON.stringify(key) + ':\t' + uneval(this[key]))
+  },this)
+  return '({\n\t' + source.join(',\n\t') + '\n})'
+}
+
+function ao_Array(){
+  if (!(this instanceof ao_Object)) return new ao_Array
+}
+ao_Array.prototype.toSource = function(){
+  var source = []
+  this.forEach(function(value, index){
+    source.push(uneval(value))
+  },this)
+  return '[\n\t' + source.join(',\n\t') + '\n]'
+}
