@@ -1,10 +1,10 @@
 var PSFakeDOM = typeof exports == 'object' ? exports : {}
 
 PSFakeDOM.getLayerCount = function getLayerCount() {
-  var ref = new ActionReference
-  ref.putProperty(app.charIDToTypeID("Prpr"), app.charIDToTypeID("NmbL"))
-  ref.putEnumerated(app.charIDToTypeID("Dcmn"), app.charIDToTypeID("Ordn"), app.charIDToTypeID("Trgt"))
-  return executeActionGet(ref).getInteger(app.charIDToTypeID("NmbL")) + 1
+	var ref = new ActionReference;
+	ref.putProperty(stringIDToTypeID("property"), stringIDToTypeID("numberOfLayers"));
+	ref.putEnumerated(stringIDToTypeID("document"), stringIDToTypeID("ordinal"), stringIDToTypeID("targetEnum"));
+  return executeActionGet(ref).getInteger(stringIDToTypeID("numberOfLayers")) + 1
 }
 
 PSFakeDOM.hasBackground = function hasBackground(){try{activeDocument.backgroundLayer;return true}catch(e){return false}}
