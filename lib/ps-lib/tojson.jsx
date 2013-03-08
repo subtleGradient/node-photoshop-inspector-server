@@ -445,3 +445,5 @@ ao_Array.prototype.toSource = function(){
   },this)
   return '[\n\t' + source.join(',\n\t') + '\n]'
 }
+
+String.prototype.toSource = String.prototype.toJSON
