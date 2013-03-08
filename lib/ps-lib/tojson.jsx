@@ -90,7 +90,9 @@ ao_ActionType.prototype.toSource = function(){
   if (this.stringID === '') return 'charIDToTypeID(' + JSON.stringify(this.charID) + ')'
   return 'stringIDToTypeID(' + JSON.stringify(this.stringID) + ')'
 }
-
+ao_ActionType.prototype.valueOf = function(){return this.typeID}
+ao_ActionType.prototype.toString =
+ao_ActionType.prototype.toJSON = function(){return this.stringID || '^' + this.charID}
 
 ActionReference.prototype.toSource = function ActionReference$toSource(){
   var ref = this
