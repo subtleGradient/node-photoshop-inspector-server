@@ -30,7 +30,13 @@ PSFakeDOM.invokeToJSON = function invokeToJSON(layer){ return layer.toJSON() }
 
 PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(layers, root){
   var layersByID = {}, parentId
-  if (root == null) root = {layerID:-1, _childLayerIDs:[], _childCount:0, _jsPath:'app.activeDocument', _namePath:[app.activeDocument.name]}
+  if (root == null) root = {
+    layerID: -1,
+    _childLayerIDs: [],
+    _childCount: 0,
+    // _jsPath: 'app.activeDocument',
+    _namePath: [app.activeDocument.name]
+  }
   parentId = root.layerID
   childIndex = 0
   layersByID[parentId] = root
@@ -49,7 +55,7 @@ PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(l
     layer._parentId = parentId
     layer._childIndex = layersByID[parentId]._childCount++
     layer._namePath = layersByID[parentId]._namePath.concat(layer.name)
-    layer._jsPath = layersByID[parentId]._jsPath + '.layers[' + layer._childIndex + ']'
+    // layer._jsPath = layersByID[parentId]._jsPath + '.layers[' + layer._childIndex + ']'
     if (!layersByID[parentId]._childLayerIDs) layersByID[parentId]._childLayerIDs = []
     layersByID[parentId]._childLayerIDs.push(layer.layerID)
     
@@ -204,6 +210,7 @@ PSFakeDOM.findUniqueStyles = function findUniqueStyles(){
   return styles
 }
 
+/* THIS IS SUPER SLOW AND STUFF
 PSFakeDOM.populateValues = function(keys, ids){
   var layers = PSFakeDOM.getLayers()
   if (ids == null) ids = Object.keys(layers);
@@ -221,3 +228,4 @@ PSFakeDOM.generatePopulateValuesFunction = function(keys, ids){
   }).join('\n')
   return source + '\nreturn layers'
 }
+*/
