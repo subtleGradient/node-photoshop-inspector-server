@@ -1004,7 +1004,9 @@ function fs_readFileSync(path){
 function fs_writeFileSync(path, data){
   var file = new File(path);
   file.open('w');
-  file.writeln(data);
+  data.split('\n').forEach(function(line){
+    file.writeln(line);
+  })
   file.close();
   return file
 }
