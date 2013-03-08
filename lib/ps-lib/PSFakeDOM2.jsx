@@ -68,6 +68,13 @@ PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(l
   return layersByID
 }
 
+PSFakeDOM.getMetaDataForLayerId = function(layerID){
+	var ref = new ActionReference;
+	ref.putProperty(stringIDToTypeID("property"), stringIDToTypeID("metadata"));
+	ref.putIdentifier(stringIDToTypeID("layer"), layerID);
+  return executeActionGet(ref).getObjectValue(stringIDToTypeID('metadata'));
+}
+
 PSFakeDOM.requestChildNodes = function requestChildNodes(layerID, depth){
   if (depth == null) depth = 1
   var children
@@ -117,6 +124,8 @@ PSFakeDOM.LayerKeyWhitelist = {
   hasUserMask:1,
   hasVectorMask:1,
   adjustment:1,
+  
+  metadata:1,
 }
 
 PSFakeDOM.LayerKeyBlacklist = {}
@@ -136,6 +145,9 @@ PSFakeDOM.getLayers = function getLayers(LayerKeyWhitelist){
         }
         var value = layer[key]
         flatLayer[key] = value
+      }
+      if (LayerKeyWhitelist.metadata){
+        flatLayer.metadata = PSFakeDOM.getMetaDataForLayerId(layer.layerID)
       }
       return flatLayer
     })
