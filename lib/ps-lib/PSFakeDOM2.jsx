@@ -24,7 +24,8 @@ PSFakeDOM.getLayerActionDescriptors = function getLayerActionDescriptors(){
   return layers
 }
 
-PSFakeDOM.layerRefToLayerDescriptor = app.executeActionGet
+PSFakeDOM.executeActionGet = app.executeActionGet.bind(app)
+PSFakeDOM.executeAction = app.executeAction.bind(app)
 
 PSFakeDOM.invokeToJSON = function invokeToJSON(layer){ return layer.toJSON() }
 
@@ -44,7 +45,7 @@ PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(l
   layers.filter(Boolean).forEach(function(layer, index){
     // Close Layer Group
     // if (layer.name == '</Layer group>'){
-    if (layer.layerSection == 'layerSectionEnd'){
+    if (layer.layerSection.stringID == 'layerSectionEnd'){
       layer._groupEnd = true
       parentId = layersByID[parentId]._parentId
       return
@@ -60,7 +61,7 @@ PSFakeDOM.layers_populateChildLayerIDs = function layers_populateChildLayerIDs(l
     layersByID[parentId]._childLayerIDs.push(layer.layerID)
     
     // Layer Group
-    if (layer.layerSection == 'layerSectionStart'){
+    if (layer.layerSection.stringID == 'layerSectionStart'){
       layer._childCount = 0
       parentId = layer.layerID
     }
@@ -144,6 +145,7 @@ PSFakeDOM.getLayers = function getLayers(LayerKeyWhitelist){
           continue;
         }
         var value = layer[key]
+        // if (value != null && typeof value == 'object' && 'toJSON' in value) value = value.toJSON()
         flatLayer[key] = value
       }
       if (LayerKeyWhitelist.metadata){
@@ -241,3 +243,29 @@ PSFakeDOM.generatePopulateValuesFunction = function(keys, ids){
   return source + '\nreturn layers'
 }
 */
+
+PSFakeDOM.getLayerIds = function(){
+  var ref
+  var index = PSFakeDOM.getLayerCount()
+  var layerIDs = []
+  
+  while (index-- > 0){
+    ref = new ActionReference;
+    ref.putProperty(stringIDToTypeID("property"), stringIDToTypeID("layerID"));
+    ref.putIndex(stringIDToTypeID("layer"), index);
+    try { layerIDs.push(executeActionGet(ref).getInteger(stringIDToTypeID("layerID"))) }
+    catch(e){}
+  }
+  return layerIDs
+}
+
+PSFakeDOM.getLayerIdsByTime = function(time){
+  if (time == null) time = app.activeDocument.fullName.modified;
+  if (typeof time == 'object') time = +time;
+  if (isNaN(time)) throw Error('NaN');
+  
+  return PSFakeDOM.getLayerIds().filter(function(layerID){
+    return time < PSFakeDOM.getMetaDataForLayerId(layerID).getDouble(stringIDToTypeID('layerTime')) * 1000
+  })
+}
+

@@ -1510,4 +1510,14 @@ ao_LayerStyle.refFrom = function(layerRef){
   return executeActionGet(layerRef).getObjectValue(stringIDToTypeID('layerEffects'))
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
+var ao_executeAction = {}
+
+ao_executeAction.placedLayerReplaceContents = function(file){
+  file = new File(file)
+  
+  var descriptor = new ActionDescriptor
+  descriptor.putPath(stringIDToTypeID("null"), file)
+  executeAction(stringIDToTypeID("placedLayerReplaceContents"), descriptor)
+}
