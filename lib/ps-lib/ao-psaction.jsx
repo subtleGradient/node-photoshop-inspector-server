@@ -1384,6 +1384,9 @@ function scaleSmartObjectInnards(layerRef, scale){
   
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+
 function ao_LayerStyle(){}
 
 ao_LayerStyle.save = function(file){
