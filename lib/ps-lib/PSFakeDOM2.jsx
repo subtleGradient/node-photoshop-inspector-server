@@ -192,11 +192,12 @@ PSFakeDOM.openFileAtPath = function openFileAtPath(path){
   return executeAction(charIDToTypeID("Opn "), desc, DialogModes.NO)
 }
 
-PSFakeDOM.getLayerRefById = function getLayerRefById(layerID){ var ref = new ActionReference; ref.putIdentifier(app.charIDToTypeID("Lyr "), layerID); return ref }
-PSFakeDOM.getLayerRefByName = function getLayerRefByName(layerName){ var ref = new ActionReference; ref.putName(app.charIDToTypeID("Lyr "), layerName); return ref }
-PSFakeDOM.getLayerRefByIndex = function getLayerRefByIndex(layerIndex){ var ref = new ActionReference; ref.putIndex(app.charIDToTypeID("Lyr "), layerIndex); return ref }
+PSFakeDOM.layerRefsSelected = function(){var ref = new ActionReference; ref.putEnumerated(stringIDToTypeID("layer"), stringIDToTypeID("ordinal"), stringIDToTypeID("targetEnum")); return ref}
+PSFakeDOM.layerRefForId = PSFakeDOM.getLayerRefById = function getLayerRefById(layerID){ var ref = new ActionReference; ref.putIdentifier(app.charIDToTypeID("Lyr "), layerID); return ref }
+PSFakeDOM.layerRefForName = PSFakeDOM.getLayerRefByName = function getLayerRefByName(layerName){ var ref = new ActionReference; ref.putName(app.charIDToTypeID("Lyr "), layerName); return ref }
+PSFakeDOM.layerRefForIndex = PSFakeDOM.getLayerRefByIndex = function getLayerRefByIndex(layerIndex){ var ref = new ActionReference; ref.putIndex(app.charIDToTypeID("Lyr "), layerIndex); return ref }
 
-PSFakeDOM.selectLayerByRef = function selectLayerByRef(layerRef){
+PSFakeDOM.layerRef_select = PSFakeDOM.selectLayerByRef = function selectLayerByRef(layerRef){
   var idslct = charIDToTypeID( "slct" );
       var desc104 = new ActionDescriptor();
       var idnull = charIDToTypeID( "null" );
@@ -269,3 +270,21 @@ PSFakeDOM.getLayerIdsByTime = function(time){
   })
 }
 
+PSFakeDOM.layerPropertyNames = function(){
+  return Object.keys(PSFakeDOM.setLayer)
+}
+
+PSFakeDOM.layerRefFor
+
+PSFakeDOM.setLayer = function(layerRef, values){
+  return Object.keys(values).map(function(key){
+    var value = values[key]
+    var setter = PSFakeDOM['setLayer_' + key]
+    if (typeof setter != 'function') return Error('"' + key + '" is readonly');
+    return setter(layerRef, value)
+  })
+}
+
+PSFakeDOM['setLayer_opacity'] = function(layerRef, value){
+  
+}

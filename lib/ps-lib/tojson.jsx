@@ -132,7 +132,7 @@ ActionDescriptor.prototype.toJSON = function toJSON(){
   // var typeIDs = []
   while (index-- > 0){
     typeID = this.getKey(index)
-    key = typeIDToStringID(typeID)
+    key = typeIDToStringID(typeID) || '^' + typeIDToCharID(typeID)
     // typeIDO = typeIDs[index] = {
     //   typeID:typeID,
     //   charID:typeIDToCharID(typeID),
@@ -295,6 +295,20 @@ ActionDescriptor.from = function(object){
   return descriptor
 }
 
+ActionDescriptor.prototype.setOnRefAs = function(ref, type){
+  if (type == null) type = stringIDToTypeID("layer");
+  if (type == stringIDToTypeID("layer")){
+  	var descriptor = new ActionDescriptor;
+  	descriptor.putReference(stringIDToTypeID("null"), ref);
+  	descriptor.putBoolean(stringIDToTypeID("makeVisible"), false);
+    executeAction(stringIDToTypeID("select"), descriptor, DialogModes.NO);
+  }
+	var descriptor = new ActionDescriptor;
+	descriptor.putReference(stringIDToTypeID("null"), ref);
+	descriptor.putObject(stringIDToTypeID("to"), type, this);
+  return executeAction(stringIDToTypeID("set"), descriptor, DialogModes.NO);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ActionReference.prototype.toJSON = function(){
@@ -362,6 +376,10 @@ ActionReference.ao_getTypeString = function(_ReferenceFormType){
   if (_ReferenceFormType == ReferenceFormType.OFFSET) return 'Offset'
   if (_ReferenceFormType == ReferenceFormType.PROPERTY) return 'Property'
   return
+}
+
+ActionReference.prototype.executeActionGet = function(){
+  return app.executeActionGet(this)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
