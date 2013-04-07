@@ -1,7 +1,19 @@
 {
-  "name":"node-photoshop-inspector-server",
-  "version":"0.1.0",
+  "name":"photoshop-inspector-server",
+  "version":"0.2.0",
+  
   "description":"HTTP WebSocket JSON-RPC Server for interacting with Adobe Photoshop via the Remote WebKit Inspector protocol",
   "author":"Thomas Aylott <thomas@subtlegradient.com> (http://subtlegradient.com/)",
-  "license":"MIT"
+  "copyright":"2012-2013 Facebook",
+  "license":"MIT",
+  
+  "dependencies":[
+    "photoshop@~0.2",
+    "htmlparser@~1",
+    "ws@~0.4"
+  ],
+  
+  "devDependencies":[
+    "ansi"
+  ]
 }

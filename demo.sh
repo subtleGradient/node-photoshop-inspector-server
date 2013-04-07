@@ -12,6 +12,6 @@ DEVTOOLS_URL="http://localhost:$DEBUG_PORT/devtools/devtools.html?ws=127.0.0.1:$
   "$DEVTOOLS_URL" &
 
 DEBUG_PID="$!"
-node index.js $PSWIP_PORT
+npm start
 
 kill "$DEBUG_PID"
