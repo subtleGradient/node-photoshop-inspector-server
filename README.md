@@ -7,3 +7,7 @@ Use any WebKit/Blink compatible web inspector frontend to inspect and interact w
     ./demo.sh
 
 
+## Install
+
+    npm install photoshop-inspector-server
+
