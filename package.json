@@ -1,6 +1,6 @@
 {
   "name":"photoshop-inspector-server",
-  "version":"0.2.0",
+  "version":"0.2.1",
   
   "description":"HTTP WebSocket JSON-RPC Server for interacting with Adobe Photoshop via the Remote WebKit Inspector protocol",
   "author":"Thomas Aylott <thomas@subtlegradient.com> (http://subtlegradient.com/)",
